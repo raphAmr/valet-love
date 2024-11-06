@@ -1,0 +1,34 @@
+[
+    {
+      "id_drink": 1,
+      "name_drink": "Beer",
+      "price_production_drink": 50,
+      "price_selling_drink": 100,
+      "ingredient_drink": "Hops, Water, Yeast",
+      "quantity_drink": 200
+    },
+    {
+      "id_drink": 2,
+      "name_drink": "Wine",
+      "price_production_drink": 100,
+      "price_selling_drink": 200,
+      "ingredient_drink": "Grapes, Yeast",
+      "quantity_drink": 150
+    },
+    {
+      "id_drink": 3,
+      "name_drink": "Whiskey",
+      "price_production_drink": 150,
+      "price_selling_drink": 300,
+      "ingredient_drink": "Grain, Water",
+      "quantity_drink": 100
+    },
+    {
+      "id_drink": 4,
+      "name_drink": "Soda",
+      "price_production_drink": 20,
+      "price_selling_drink": 50,
+      "ingredient_drink": "Carbonated Water, Sugar",
+      "quantity_drink": 300
+    }
+  ]
