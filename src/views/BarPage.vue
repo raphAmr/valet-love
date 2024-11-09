@@ -36,10 +36,14 @@
   </template>
   
   <script>
+  import barsData from "../json/bar.json"
+
   export default {
     name: 'BarPage',
     data() {
-      return {
+      return { 
+        bars : barsData
+        /*
         bars: [
           {
             name: "The Financier",
@@ -92,7 +96,7 @@
               sunday: "07:00 - 02:00"
             }
           }
-        ]
+        ]*/
       };
     },
     methods: {

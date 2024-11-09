@@ -1,0 +1,57 @@
+[
+    {
+      "id_bar": 1,
+      "name": "The Financier",
+      "description": "Discover the warm atmosphere and unique cocktails of the Financier bar. An ideal place to relax and socialise.",
+      "address": "15 Rue du Départ, 75014 Paris",
+      "image": "/image/bar1.jpg",
+      "linkName": "Financier",
+      "showHours": false,
+      "hours": {
+        "monday": "17:00 - 02:00",
+        "tuesday": "17:00 - 02:00",
+        "wednesday": "17:00 - 02:00",
+        "thursday": "17:00 - 03:00",
+        "friday": "17:00 - 05:00",
+        "saturday": "14:00 - 05:00",
+        "sunday": "14:00 - 02:00"
+      }
+    },
+    {
+      "id_bar": 2,
+      "name": "The Bateau Ivre",
+      "description": "A modern bar with innovative drinks and a dynamic atmosphere. Perfect for evenings out with friends.",
+      "address": "40 Rue Descartes, 75005 Paris",
+      "image": "/image/bar2.jpg",
+      "linkName": "BateauIvre",
+      "showHours": false,
+      "hours": {
+        "monday": "17:00 - 02:00",
+        "tuesday": "17:00 - 02:00",
+        "wednesday": "17:00 - 02:00",
+        "thursday": "17:00 - 02:00",
+        "friday": "17:00 - 02:00",
+        "saturday": "17:00 - 02:00",
+        "sunday": "17:00 - 02:00"
+      }
+    },
+    {
+    "id_bar": 3,
+    "name": "The New Institute",
+    "description": "A chic bar with a wide selection of wines and an elegant atmosphere. The perfect place for refined evenings out.",
+    "address": "1 bd St Germain, 75005 Paris",
+    "image": "/image/bar3.jpg",
+    "linkName": "NewInstitute",
+    "showHours": false,
+    "hours": {
+        "monday": "07:00 - 02:00",
+        "tuesday": "07:00 - 02:00",
+        "wednesday": "07:00 - 02:00",
+        "thursday": "07:00 - 02:00",
+        "friday": "07:00 - 02:00",
+        "saturday": "07:00 - 02:00",
+        "sunday": "07:00 - 02:00"
+    }
+          }
+  ]
+  

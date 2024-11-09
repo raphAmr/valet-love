@@ -1,0 +1,12 @@
+[
+    { "bar_id": 1, "employee_id": 1 },
+    { "bar_id": 1, "employee_id": 9 },
+    { "bar_id": 1, "employee_id": 7 },
+    { "bar_id": 1, "employee_id": 5 },
+    { "bar_id": 2, "employee_id": 2 },
+    { "bar_id": 2, "employee_id": 4 },
+    { "bar_id": 2, "employee_id": 10 },
+    { "bar_id": 3, "employee_id": 6 },
+    { "bar_id": 3, "employee_id": 3 },
+    { "bar_id": 3, "employee_id": 8 }
+  ]
