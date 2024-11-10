@@ -234,7 +234,7 @@ export default {
 
 <style scoped>
 .header {
-  background-color: #ff8c42;
+  background-color: #5005a0;
   text-align: center;
   padding: 20px;
   color: white;
@@ -250,7 +250,7 @@ export default {
 .navbar button {
   margin: 0 10px;
   padding: 10px 20px;
-  background-color: #ff8c42;
+  background-color: #5005a0;
   border: none;
   color: white;
   cursor: pointer;
