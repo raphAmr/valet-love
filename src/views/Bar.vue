@@ -1,40 +1,52 @@
 <template>
-  <div>
+  <div v-if="bar">
     <header class="header">
-      <h1 class="title">Bateau Ivre</h1>
-      <nav class="navbar">
-        <button @click="currentSection = 'home'">Home</button>
-        <button @click="currentSection = 'drinks'">Drinks</button>
-        <button @click="currentSection = 'games'">Games</button>
-        <button @click="currentSection = 'workers'">Workers</button>
-      </nav>
-    </header>
+      <div class="logo-container">
+        <img src="/image/logo.png" alt="Logo" class="logo-image">
+      </div>
+      <div class="navbar">
+        <button @click="currentSection = 'home'">HOME</button>
+        <button @click="currentSection = 'About'">ABOUT</button>
+        <button @click="currentSection = 'favorite'">FAVORITE</button>
+        <button @click="currentSection = 'login'">LOGIN</button>
+      </div>
+    </header> 
+
 
     <main>
-      <!-- Home -->
+      <!-- Home Section -->
       <section v-if="currentSection === 'home'" class="home-section">
-        <div class="carousel-container">
-          <button @click="prevImage" class="carousel-button prev-button">&#10094;</button>
-          <img :src="carouselImages[currentImageIndex]" alt="Bateau Ivre" class="bar-image">
-          <button @click="nextImage" class="carousel-button next-button">&#10095;</button>
-        </div>
-        <div class="description">
-          <h2>About the Bateau Ivre</h2>
-          <p>{{ barData.description }}</p>
-          <p>The Bateau Ivre is a warm and welcoming bar, spread across two levels, with a cozy basement that adds to its unique charm. Designed to provide a pleasant experience for all, it is the perfect place to gather with friends, whether to relax or have fun over an original drink. The atmosphere at Bateau Ivre is modern and dynamic, with tasteful decor that combines comfort and conviviality</p>
-          <p>On the ground floor, you'll find a spacious and bright area, ideal for chatting or enjoying the many games available. The basement, on the other hand, offers a more intimate and subdued setting, perfect for those seeking a quieter atmosphere, yet equally friendly. Whether you're here to savor one of our creative cocktails, discover a new beer, or engage in a fun board game, every corner of this bar is designed to make you feel at home.</p>
-          <p>Bateau Ivre is more than just a bar; it's a place where friends come together, where laughter fills the air, and where moments of fun and camaraderie are shared, all in a relaxed and festive atmosphere.</p>
-          
-        </div>
         
+        <div class="description">
+          <h1 class="title">{{ bar.name }}</h1>
+          <p v-html="bar.fool_description"></p>
+
+        </div>
+
+        <div class="items">
+          <div class="drinks-section">
+            <img src="/image/Drinks_item.png" alt="Drinks Item">
+            <button @click="currentSection = 'drinks'">DRINKS</button>
+          </div>
+
+          <div class="games-section">
+            <img src="/image/Games_item.png" alt="Games Item">
+            <button @click="currentSection = 'games'">GAMES</button>
+          </div>
+
+          <div class="workers-section">
+            <img src="/image/Workers_item.png" alt="Workers Item">
+            <button @click="currentSection = 'workers'">WORKERS</button>
+          </div>
+        </div>
+
         <!-- Location Section with Toggleable Hours -->
         <div class="location">
           <h3>Location</h3>
           <div class="location-content">
-            <img src="/image/map2.png" alt="Map to Bateau Ivre" class="map-image">
+            <img :src="bar.image_map" alt="Map to the bar" class="map-image">
             <div class="location-details">
-              <p><strong>Address:</strong> {{ barData.address }}</p>
-               <!-- Toggleable Hours -->
+              <p><strong>Address:</strong> {{ bar.address }}</p>
               <div class="schedule-container">
                 <p><strong>Opening times</strong></p>
                 <button @click="toggleHours">
@@ -42,9 +54,7 @@
                 </button>
                 <div v-if="showHours" class="hoursList">
                   <ul>
-                    <li v-for="(hours, day) in barData.hours" :key="day">
-                      {{ day }}: {{ hours }}
-                    </li>
+                    <li v-for="(hours, day) in bar.hours" :key="day">{{ day }}: {{ hours }}</li>
                   </ul>
                 </div>
               </div>
@@ -53,10 +63,25 @@
         </div>
       </section>
 
-      <!-- Drinks Table -->
+      <!-- About Section -->
+      <section v-if="currentSection === 'About'">
+        <p>T'es arrivé dans le about mais jai pas encore fait grand chose</p>
+      </section>
+
+      <!-- Favorite Section -->
+      <section v-if="currentSection === 'favorite'">
+        <p>Pareil que pour about</p>
+      </section>
+
+      <!-- Login Section -->
+      <section v-if="currentSection === 'login'">
+        <p>pareil que pour favorite</p>
+      </section>
+
+      <!-- Drinks Section -->
       <section v-if="currentSection === 'drinks'">
         <h2 class="centered-title">Available Drinks</h2>
-        <table class="drink-table" v-if="barDrinks.length > 0">
+        <table class="drink-table" v-if="filteredDrinks.length > 0">
           <thead>
             <tr>
               <th>Image</th>
@@ -66,7 +91,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(drink, index) in barDrinks" :key="index">
+            <tr v-for="(drink, index) in filteredDrinks" :key="index">
               <td><img :src="drink.image" :alt="drink.name_drink" class="drink-image"></td>
               <td>{{ drink.name_drink }}</td>
               <td>{{ drink.ingredient_drink }}</td>
@@ -77,10 +102,10 @@
         <p v-else>No drinks available</p>
       </section>
 
-      <!-- Games Table -->
+      <!-- Games Section -->
       <section v-if="currentSection === 'games'">
         <h2 class="centered-title">Available Games</h2>
-        <table class="game-table" v-if="barGames.length > 0">
+        <table class="game-table" v-if="filteredGames.length > 0">
           <thead>
             <tr>
               <th>Image</th>
@@ -93,7 +118,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(game, index) in barGames" :key="index">
+            <tr v-for="(game, index) in filteredGames" :key="index">
               <td><img :src="game.image" :alt="game.name_game" class="game-image"></td>
               <td>{{ game.name_game }}</td>
               <td>{{ game.price_game }}</td>
@@ -107,10 +132,10 @@
         <p v-else>No games available</p>
       </section>
 
-      <!-- Workers Table -->
+      <!-- Workers Section -->
       <section v-if="currentSection === 'workers'">
         <h2 class="centered-title">Our Workers</h2>
-        <table class="worker-table" v-if="barWorkers.length > 0">
+        <table class="worker-table" v-if="filteredWorkers.length > 0">
           <thead>
             <tr>
               <th>Name</th>
@@ -121,7 +146,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(worker, index) in barWorkers" :key="index">
+            <tr v-for="(worker, index) in filteredWorkers" :key="index">
               <td>{{ worker.name_employee }}</td>
               <td>{{ worker.post_employee }}</td>
               <td>{{ worker.age_employee }}</td>
@@ -147,20 +172,15 @@ import workersData from "../json/workers.json";
 import barWorkersData from "../json/bar_workers.json";
 
 export default {
-  name: "BateauIvre",
+  name: "Bar",
   data() {
     return {
       currentSection: "home",
-      barData: {},
+      bar: null,
       barDrinks: [],
       barGames: [],
-      barWorkers: [], 
+      barWorkers: [],
       currentImageIndex: 0,
-      carouselImages: [
-        "/image/bar2.jpg", 
-        "/image/bar2_1.jpg", 
-        "/image/bar2_2.jpg"
-      ],
       showHours: false
     };
   },
@@ -168,10 +188,11 @@ export default {
     this.loadBarData();
     this.loadBarDrinks();
     this.loadBarGames();
-    this.loadBarWorkers(); 
+    this.loadBarWorkers();
   },
   computed: {
     filteredDrinks() {
+      console.log("Filtered drinks:", this.barDrinks);
       return drinksData.filter(drink => 
         this.barDrinks.some(barDrink => barDrink.drink_id === drink.id_drink)
       );
@@ -189,44 +210,29 @@ export default {
   },
   methods: {
     loadBarData() {
-      const barId = 2;
-      this.barData = barsData.find(bar => bar.id_bar === barId);
+      const barId = parseInt(this.$route.params.id, 10);
+      this.bar = barsData.find(bar => bar.id_bar === barId);
     },
     loadBarDrinks() {
-      const barId = 2;
+      const barId = parseInt(this.$route.params.id, 10);
       const drinkIds = barDrinksData
-        .filter(relation => relation.bar_id === barId)
-        .map(relation => relation.drink_id);
-    
-      this.barDrinks = drinksData.filter(drink => 
-        drinkIds.includes(drink.id_drink)
-      );
+        .filter(barDrink => barDrink.bar_id === barId)
+        .map(barDrink => barDrink.drink_id);
+      this.barDrinks = drinkIds;
     },
     loadBarGames() {
-      const barId = 2;
+      const barId = parseInt(this.$route.params.id, 10);
       const gameIds = barGamesData
-        .filter(relation => relation.bar_id === barId)
-        .map(relation => relation.game_id);
-
-      this.barGames = gamesData.filter(game => 
-        gameIds.includes(game.id_game)
-      );
+        .filter(barGame => barGame.bar_id === barId)
+        .map(barGame => barGame.game_id);
+      this.barGames = gameIds;
     },
     loadBarWorkers() {
-      const barId = 2;
+      const barId = parseInt(this.$route.params.id, 10);
       const workerIds = barWorkersData
-        .filter(relation => relation.bar_id === barId)
-        .map(relation => relation.employee_id);
-
-      this.barWorkers = workersData.filter(worker => 
-        workerIds.includes(worker.id_employee)
-      );
-    },
-    prevImage() {
-      this.currentImageIndex = (this.currentImageIndex - 1 + this.carouselImages.length) % this.carouselImages.length;
-    },
-    nextImage() {
-      this.currentImageIndex = (this.currentImageIndex + 1) % this.carouselImages.length;
+        .filter(barWorker => barWorker.bar_id === barId)
+        .map(barWorker => barWorker.employee_id);
+      this.barWorkers = workerIds;
     },
     toggleHours() {
       this.showHours = !this.showHours;
@@ -235,25 +241,37 @@ export default {
 };
 </script>
 
+  
+
 <style scoped>
+
 .header {
-  background-color: #ff8c42;
-  text-align: center;
-  padding: 20px;
+  display: flex; /* Active Flexbox */
+  justify-content: space-between; /* Place le logo à gauche et les boutons à droite */
+  align-items: center; /* Aligne verticalement tous les éléments */
+  background-color: #5005a0;
   color: white;
-  font-size: 2em;
+  padding: 10px 20px; /* Ajoute de l’espace à l’intérieur du header */
+}
+
+.logo-container {
+  display: flex; /* Pour flexibilité future */
+  align-items: center; /* Centrer verticalement le logo */
+}
+
+.logo-image {
+  height: 50px; /* Ajuste la hauteur du logo */
+  width: auto; /* Conserve ses proportions */
 }
 
 .navbar {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
+  display: flex; /* Aligne les boutons sur une ligne */
+  gap: 15px; /* Espace entre les boutons */
 }
 
 .navbar button {
-  margin: 0 10px;
   padding: 10px 20px;
-  background-color: #ff8c42;
+  background-color: #05a04b;
   border: none;
   color: white;
   cursor: pointer;
@@ -266,6 +284,9 @@ export default {
   background-color: #e07b37;
 }
 
+
+
+
 .home-section, .drinks, .games {
   text-align: center;
   margin-top: 20px;
@@ -276,45 +297,6 @@ export default {
   max-width: 600px;
   margin: 10px 0;
   border-radius: 8px;
-}
-
-.carousel-container {
-  position: relative;
-  width: 80%;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.bar-image {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-}
-
-.carousel-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  font-size: 2em;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  z-index: 1;
-  border-radius: 50%;
-}
-
-.prev-button {
-  left: 10px;
-}
-
-.next-button {
-  right: 10px;
-}
-
-.carousel-button:hover {
-  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .description {
@@ -362,6 +344,44 @@ export default {
 }
 
 
+.items {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Espacement entre les éléments */
+  margin-top: 20px;
+}
+
+/* Styles pour chaque section */
+.drinks-section,
+.games-section,
+.workers-section {
+  display: flex;
+  flex-direction: column; /* Aligne les enfants verticalement */
+  align-items: center;    /* Centrer horizontalement */
+}
+
+.drinks-section img,
+.games-section img,
+.workers-section img {
+  width: 300px;   /* Ajustez la taille de l'image */
+  height: auto;
+  margin-bottom: 10px; /* Espacement entre l'image et le bouton */
+}
+
+.drinks-section button, .games-section button, .workers-section button {
+  padding: 10px 20px;
+  background-color: #05a04b;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+.drinks-section button:hover, .games-section button:hover,.workers-section button:hover {
+  background-color: #e07b37;
+}
 
 
 .bar-image {

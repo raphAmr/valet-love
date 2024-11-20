@@ -1,17 +1,37 @@
 <template>
-    <div>
-      <header class="header">
-        <h1 class="title">Valet-love</h1>
-      </header>
-  
-      <main>
+  <div>
+    <header class="header">
+      <div class="logo-container">
+        <img src="/image/logo.png" alt="Logo" class="logo-image">
+      </div>
+      <div class="navbar">
+        <button @click="currentSection = 'home'">HOME</button>
+        <button @click="currentSection = 'About'">ABOUT</button>
+        <button @click="currentSection = 'favorite'">FAVORITE</button>
+        <button @click="currentSection = 'login'">LOGIN</button>
+      </div>
+    </header> 
+
+    <main>
+      <!-- Home Section -->
+      <section v-if="currentSection === 'home'" class="home-section">
         <section class="intro">
           <h2>Choose the bar you want to go to</h2>
         </section>
-  
+
         <section class="bars">
-          <div class="bar-item" v-for="(bar, index) in bars" :key="index" :class="{'reverse': index % 2 !== 0}">
-            <img :src="bar.image" :alt="'Photo of ' + bar.name" class="bar-image">
+          <div class="bar-item" v-for="(bar, index) in bars" :key="bar.id_bar" :class="{'reverse': index % 2 !== 0}">
+            
+            <!-- Carrousel d'images pour chaque bar -->
+            <section v-if="bar.images && bar.images.length > 0" class="carousel">
+              
+              <div class="carousel-controls">
+                <button @click="prevImage(index)" class="carousel-button prev-button">&#10094;</button>
+                <img :src="bar.images[currentImageIndex(bar)]" alt="Image bar" class="bar-image">
+                <button @click="nextImage(index)" class="carousel-button next-button">&#10095;</button>
+              </div>
+            </section>
+          
             <div class="bar-info">
               <h3>{{ bar.name }}</h3>
               <p>{{ bar.description }}</p>
@@ -27,86 +47,134 @@
                   </ul>
                 </div>
               </div>
-              <router-link :to="{ name: bar.linkName }" class="bar-link">See more</router-link>
+              
+              <router-link :to="{ name: 'Bar', params: { id: bar.id_bar } }" class="bar-id">
+                See more
+              </router-link>
+
             </div>
           </div>
         </section>
-      </main>
-    </div>
-  </template>
-  
-  <script>
-  import barsData from "../json/bar.json"
+      </section>
+      <!-- About Section -->
+      <section v-if="currentSection === 'About'">
+        <p>T'es arrivé dans le about mais jai pas encore fait grand chose</p>
+      </section>
 
-  export default {
-    name: 'BarPage',
-    data() {
-      return { 
-        bars : barsData
-        /*
-        bars: [
-          {
-            name: "The Financier",
-            description: "Discover the warm atmosphere and unique cocktails of the Financier bar. An ideal place to relax and socialise.",
-            address: "15 Rue du Départ, 75014 Paris",
-            image: require('../views/image/bar1.jpg'),
-            linkName: "Financier",
-            showHours: false,
-            hours: {
-              monday: "17:00 - 02:00",
-              tuesday: "17:00 - 02:00",
-              wednesday: "17:00 - 02:00",
-              thursday: "17:00 - 03:00",
-              friday: "17:00 - 05:00",
-              saturday: "14:00 - 05:00",
-              sunday: "14:00 - 02:00"
-            }
-          },
-          {
-            name: "The Bateau Ivre",
-            description: "A modern bar with innovative drinks and a dynamic atmosphere. Perfect for evenings out with friends.",
-            address: "40 Rue Descartes, 75005 Paris",
-            image: require('../views/image/bar2.jpg'),
-            linkName: "BateauIvre",
-            showHours: false,
-            hours: {
-              monday: "17:00 - 02:00",
-              tuesday: "17:00 - 02:00",
-              wednesday: "17:00 - 02:00",
-              thursday: "17:00 - 02:00",
-              friday: "17:00 - 02:00",
-              saturday: "17:00 - 02:00",
-              sunday: "17:00 - 02:00"
-            }
-          },
-          {
-            name: "The New Institute",
-            description: "A chic bar with a wide selection of wines and an elegant atmosphere. The perfect place for refined evenings out.",
-            address: "1 bd St Germain, 75005 Paris",
-            image: require('../views/image/bar3.jpg'),
-            linkName: "NewInstitute",
-            showHours: false,
-            hours: {
-              monday: "07:00 - 02:00",
-              tuesday: "07:00 - 02:00",
-              wednesday: "07:00 - 02:00",
-              thursday: "07:00 - 02:00",
-              friday: "07:00 - 02:00",
-              saturday: "07:00 - 02:00",
-              sunday: "07:00 - 02:00"
-            }
-          }
-        ]*/
-      };
-    },
-    methods: {
-    toggleHours(index) {
-      this.bars[index].showHours = !this.bars[index].showHours;
-    }}
-  };
-  </script>
+      <!-- Favorite Section -->
+      <section v-if="currentSection === 'favorite'">
+        <p>Pareil que pour about</p>
+      </section>
+
+      <!-- Login Section -->
+      <section v-if="currentSection === 'login'">
+        <p>pareil que pour favorite</p>
+      </section>
+    </main>
+  </div>
+</template>
+
+<script>
+import barsData from "../json/bar.json";
+
+export default {
+  name: 'BarPage',
+  data() {
+    return { 
+      currentSection: "home",
+      bars: barsData,
+    };
+  },
   
-  <style scoped>
+  methods: {
+  prevImage(barIndex) {
+    const bar = this.bars[barIndex];
+    bar.currentImageIndex = (bar.currentImageIndex - 1 + bar.images.length) % bar.images.length;
+  },
+  nextImage(barIndex) {
+    const bar = this.bars[barIndex];
+    bar.currentImageIndex = (bar.currentImageIndex + 1) % bar.images.length;
+  },
+  currentImageIndex(bar) {
+    if (bar.currentImageIndex === undefined) {
+      this.$set(bar, 'currentImageIndex', 0); // Initialisation si non défini
+    }
+    return bar.currentImageIndex;
+  },
+  toggleHours(index) {
+      this.bars[index].showHours = !this.bars[index].showHours;
+    },
+},
+
+
+};
+</script>
+
+
+<style scoped>
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.navbar button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #05a04b;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.navbar button:hover {
+  background-color: #e07b37;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+}
+.carousel-image {
+  width: 100%;
+  height: auto;
+}
+
+
+.carousel-controls {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  align-items: center; /* Centre verticalement le contenu */
+  justify-content: space-between; /* Garde les boutons aux extrémités */
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%; /* Place les boutons au centre verticalement */
+  transform: translateY(-50%);
+}
+
+button {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
   * {
     margin: 0;
     padding: 0;
@@ -122,11 +190,43 @@
   }
   
   .header {
-    background-color: #ff8c42;
-    padding: 20px;
-    width: 100%;
-    text-align: center;
-  }
+  display: flex; /* Active Flexbox */
+  justify-content: space-between; /* Place le logo à gauche et les boutons à droite */
+  align-items: center; /* Aligne verticalement tous les éléments */
+  background-color: #5005a0;
+  color: white;
+  padding: 10px 20px; /* Ajoute de l’espace à l’intérieur du header */
+}
+
+.logo-container {
+  display: flex; /* Pour flexibilité future */
+  align-items: center; /* Centrer verticalement le logo */
+}
+
+.logo-image {
+  height: 50px; /* Ajuste la hauteur du logo */
+  width: auto; /* Conserve ses proportions */
+}
+
+.navbar {
+  display: flex; /* Aligne les boutons sur une ligne */
+  gap: 15px; /* Espace entre les boutons */
+}
+
+.navbar button {
+  padding: 10px 20px;
+  background-color: #05a04b;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.navbar button:hover {
+  background-color: #e07b37;
+}
   
   .title {
     color: #fff;
@@ -151,6 +251,28 @@
     max-width: 800px;
   }
   
+  .carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 2em;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1;
+  border-radius: 50%;
+  }
+
+  .prev-button {
+  left: 10px;
+  }
+
+  .next-button {
+  right: 10px;
+  }
+
   .bar-item {
     display: flex;
     align-items: center;
@@ -166,9 +288,13 @@
   }
   
   .bar-image {
-    width: 40%;
-    height: auto;
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover; /* Remplit le conteneur sans déformer */
+  display: block;
+  margin: 0 auto;
   }
+
   
   .bar-info {
     padding: 20px;
@@ -229,5 +355,5 @@
     padding: 10px;
     border-bottom: 1px solid #ddd;
   }
-  </style>
+</style>
   

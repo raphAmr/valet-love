@@ -1,4 +1,4 @@
-import Vue from 'vue';
+/*import Vue from 'vue';
 import VueRouter from 'vue-router';
 import BarPage from '../views/BarPage.vue';
 import Financier from '../views/Financier.vue';
@@ -17,6 +17,26 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',  // Utilisation du mode 'history' pour des URLs propres
   routes
+});
+
+<router-link :to="{ name: bar.linkName }" class="bar-link">See more</router-link>
+*/
+
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import BarPage from '../views/BarPage.vue';
+import Bar from '../views/Bar.vue'; // Page dynamique pour chaque bar
+
+Vue.use(VueRouter);
+
+const routes = [
+  { path: '/', name: 'BarPage', component: BarPage },
+  { path: '/bar/:id', name: 'Bar', component: Bar }, // Utilisation d'un ID dynamique
+];
+
+const router = new VueRouter({
+  mode: 'history', // URLs propres
+  routes,
 });
 
 export default router;
