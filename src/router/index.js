@@ -32,6 +32,9 @@ Vue.use(VueRouter);
 const routes = [
   { path: '/', name: 'BarPage', component: BarPage },
   { path: '/bar/:id', name: 'Bar', component: Bar }, // Utilisation d'un ID dynamique
+  { path: "/login", name: "Login", component: () => import("@/views/Login.vue"), // Adjust the path to Login.vue
+  }
+  
 ];
 
 const router = new VueRouter({

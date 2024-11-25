@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="header">
+    <header>
       <div class="logo-container">
         <img src="/image/logo.png" alt="Logo" class="logo-image">
       </div>
@@ -8,7 +8,7 @@
         <button @click="currentSection = 'home'">HOME</button>
         <button @click="currentSection = 'About'">ABOUT</button>
         <button @click="currentSection = 'favorite'">FAVORITE</button>
-        <button @click="currentSection = 'login'">LOGIN</button>
+        <router-link :to="{ name: 'Login'}" class="login">LOGIN</router-link>
       </div>
     </header> 
 
@@ -38,7 +38,7 @@
               <p>Address : {{ bar.address }}</p>
               <div class="schedule-container">
                 <p>Opening times</p>
-                <button @click="toggleHours(index)">
+                <button @click="toggleHours(index)" class="hours-button">
                   {{ bar.showHours ? "See less" : "See the hours" }}
                 </button>
                 <div v-if="bar.showHours" class="hoursList">
@@ -114,13 +114,11 @@ export default {
 <style scoped>
 
 .navbar {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
+  display: flex; /* Aligne les boutons sur une ligne */
+  gap: 15px; /* Espace entre les boutons */
 }
 
-.navbar button {
-  margin: 0 10px;
+.navbar button, .login {
   padding: 10px 20px;
   background-color: #05a04b;
   border: none;
@@ -129,9 +127,14 @@ export default {
   font-size: 1em;
   border-radius: 4px;
   transition: background-color 0.3s;
+  border: 2px solid red; /* Debug visual */
 }
 
 .navbar button:hover {
+  background-color: #e07b37;
+}
+
+.login:hover {
   background-color: #e07b37;
 }
 
@@ -163,6 +166,24 @@ export default {
   transform: translateY(-50%);
 }
 
+.hours-button{
+  background-color: rgba(126, 65, 0, 0.76);
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.bar-id{
+  background-color: rgba(126, 65, 0, 0.39);
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/*
 button {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
@@ -173,27 +194,26 @@ button {
 
 button:hover {
   background-color: rgba(0, 0, 0, 0.7);
+}*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
-  
-  body {
-    background-color: #f0f0f5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .header {
+body {
+  background-color: #f0f0f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
   display: flex; /* Active Flexbox */
   justify-content: space-between; /* Place le logo à gauche et les boutons à droite */
   align-items: center; /* Aligne verticalement tous les éléments */
-  background-color: #5005a0;
   color: white;
   padding: 10px 20px; /* Ajoute de l’espace à l’intérieur du header */
 }
@@ -208,152 +228,133 @@ button:hover {
   width: auto; /* Conserve ses proportions */
 }
 
-.navbar {
-  display: flex; /* Aligne les boutons sur une ligne */
-  gap: 15px; /* Espace entre les boutons */
+
+.title {
+  color: #fff;
+  font-size: 2.5em;
 }
 
-.navbar button {
-  padding: 10px 20px;
-  background-color: #05a04b;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 1em;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+.intro {
+  margin: 20px 0;
+  text-align: center;
 }
 
-.navbar button:hover {
-  background-color: #e07b37;
+.intro h2 {
+  font-size: 1.8em;
+  color: #333;
 }
-  
-  .title {
-    color: #fff;
-    font-size: 2.5em;
-  }
-  
-  .intro {
-    margin: 20px 0;
-    text-align: center;
-  }
-  
-  .intro h2 {
-    font-size: 1.8em;
-    color: #333;
-  }
-  
-  .bars {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    width: 80%;
-    max-width: 800px;
-  }
-  
-  .carousel-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  font-size: 2em;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  z-index: 1;
-  border-radius: 50%;
-  }
 
-  .prev-button {
-  left: 10px;
-  }
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 80%;
+  max-width: 800px;
+}
 
-  .next-button {
-  right: 10px;
-  }
+.carousel-button {
+position: absolute;
+top: 50%;
+transform: translateY(-50%);
+background-color: rgba(0, 0, 0, 0.5);
+color: white;
+font-size: 2em;
+border: none;
+padding: 10px;
+cursor: pointer;
+z-index: 1;
+border-radius: 50%;
+}
 
-  .bar-item {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s;
-  }
-  
-  .bar-item:hover {
-    transform: scale(1.02);
-  }
-  
-  .bar-image {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover; /* Remplit le conteneur sans déformer */
-  display: block;
+.prev-button {
+left: 10px;
+}
+
+.next-button {
+right: 10px;
+}
+
+.bar-item {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.bar-item:hover {
+  transform: scale(1.02);
+}
+
+.bar-image {
+width: 100%;
+max-height: 300px;
+object-fit: cover; /* Remplit le conteneur sans déformer */
+display: block;
+margin: 0 auto;
+}
+
+
+.bar-info {
+  padding: 20px;
+  width: 60%;
+}
+
+.bar-info h3 {
+  font-size: 1.5em;
+  color: #ff8c42;
+}
+
+.bar-info p {
+  margin: 10px 0;
+  color: #555;
+}
+
+.bar-link {
+  text-decoration: none;
+  color: #ff8c42;
+  font-weight: bold;
+}
+
+.bar-link:hover {
+  color: #ff5722;
+}
+
+.reverse {
+  flex-direction: row-reverse;
+}
+
+.schedule-container {
+  padding: 20px;
+  max-width: 400px;
   margin: 0 auto;
-  }
+}
+/*
+button {
+  background-color: #42b983;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
 
-  
-  .bar-info {
-    padding: 20px;
-    width: 60%;
-  }
-  
-  .bar-info h3 {
-    font-size: 1.5em;
-    color: #ff8c42;
-  }
-  
-  .bar-info p {
-    margin: 10px 0;
-    color: #555;
-  }
-  
-  .bar-link {
-    text-decoration: none;
-    color: #ff8c42;
-    font-weight: bold;
-  }
-  
-  .bar-link:hover {
-    color: #ff5722;
-  }
-  
-  .reverse {
-    flex-direction: row-reverse;
-  }
-  
-  .schedule-container {
-    padding: 20px;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  
-  button {
-    background-color: #42b983;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  button:hover {
-    background-color: #35865e;
-  }
-  
-  .hoursList ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .hoursList li {
-    background-color: #eaeaea;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
+button:hover {
+  background-color: #35865e;
+}*/
+
+.hoursList ul {
+  list-style: none;
+  padding: 0;
+}
+
+.hoursList li {
+  background-color: #eaeaea;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
 </style>
   
