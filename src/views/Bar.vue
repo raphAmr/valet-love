@@ -73,15 +73,11 @@
         <p>Pareil que pour about</p>
       </section>
 
-      <!-- Login Section -->
-      <section v-if="currentSection === 'login'">
-        <p>pareil que pour favorite</p>
-      </section>
-
       <!-- Drinks Section -->
       <section v-if="currentSection === 'drinks'">
         <button @click="currentSection = 'home'" class="back-button">← Back to Home</button>
         <h2 class="centered-title">Available Drinks</h2>
+        <button @click="addDrink" class="add-button">+ Add a drink</button>
         <table class="drink-table" v-if="filteredDrinks.length > 0">
           <thead>
             <tr>
@@ -107,6 +103,7 @@
       <section v-if="currentSection === 'games'">
         <button @click="currentSection = 'home'" class="back-button">← Back to Home</button>
         <h2 class="centered-title">Available Games</h2>
+        <button @click="addGame" class="add-button">+ Add a game</button>
         <table class="game-table" v-if="filteredGames.length > 0">
           <thead>
             <tr>
@@ -171,6 +168,7 @@
       <section v-if="currentSection === 'workers'">
         <button @click="currentSection = 'home'" class="back-button">← Back to Home</button>
         <h2 class="centered-title">Our Workers</h2>
+        <button @click="addWorker" class="add-button">+ Add a worker</button>
         <table class="worker-table" v-if="filteredWorkers.length > 0">
           <thead>
             <tr>
@@ -224,6 +222,7 @@ import barDrinksData from "../json/bar_drinks.json";
 import gamesData from "../json/games.json";
 import barGamesData from "../json/bar_games.json";
 import workersData from "../json/workers.json";
+import deleteFromFile from "../../js/delete.js"
 
 export default {
   name: "Bar",
@@ -262,24 +261,90 @@ export default {
       barDrinksData.some(barDrink => barDrink.bar_id === barId && barDrink.drink_id === drink.id_drink)
     );
   },
-  loadBarWorkers() {
-    const barId = parseInt(this.$route.params.id, 10);
-    this.barWorkers = workersData.filter(worker => worker.id_bar === barId);
+
+  editDrink(index) {
+    // Active le mode édition pour une boisson
+    this.$set(this.barDrinks[index], "editMode", true);
   },
-  loadBarGames() {
+
+  saveDrink(index) {
+    // Sauvegarde les modifications
+    const drink = this.barDrinks[index];
+    if (!drink.name_drink || !drink.price_drink || !drink.volume_drink) {
+      alert("Please fill in all fields!");
+      return;
+    }
+    // Désactive le mode édition
+    this.$set(this.barDrinks[index], "editMode", false);
+
+    // Sauvegarde dans le localStorage
     const barId = parseInt(this.$route.params.id, 10);
-    this.barGames = gamesData.filter(game =>
-      barGamesData.some(barGame => barGame.bar_id === barId && barGame.game_id === game.id_game)
-    );
+    localStorage.setItem(`barDrinks_${barId}`, JSON.stringify(this.barDrinks));
+
+    console.log("Drink updated:", drink);
   },
+
+  deleteDrink(index) {
+    // Supprime une boisson
+    const deletedDrink = this.barDrinks.splice(index, 1);
+
+    // Sauvegarde dans le localStorage
+    const barId = parseInt(this.$route.params.id, 10);
+    localStorage.setItem(`barDrinks_${barId}`, JSON.stringify(this.barDrinks));
+
+    console.log("Drink deleted:", deletedDrink);
+  },
+
+  addDrink() {
+    const barId = parseInt(this.$route.params.id, 10);
+
+    const newDrink = {
+      id_drink: Date.now(), 
+      name_drink: "",
+      price_drink: "",
+      volume_drink: "",
+      alcohol_content_drink: "", // Par exemple, pourcentage d'alcool
+      state_drink: "Available", // Par défaut
+      image: "default_image_url", // Remplacez par une URL par défaut
+      editMode: true // Active le mode édition pour remplir les champs
+    };
+
+    // Ajouter la boisson à la liste actuelle
+    this.barDrinks.push(newDrink);
+
+    // Sauvegarder dans le localStorage
+    localStorage.setItem(`barDrinks_${barId}`, JSON.stringify(this.barDrinks));
+
+    console.log("New drink added:", newDrink);
+  },
+  
   toggleHours() {
     this.showHours = !this.showHours;
+  },
+
+  
+
+
+  loadBarGames() {
+    const barId = parseInt(this.$route.params.id, 10);
+
+    // Vérifie si une version sauvegardée existe dans le localStorage
+    const savedBarGames = localStorage.getItem(`barGames_${barId}`);
+    if (savedBarGames) {
+      this.barGames = JSON.parse(savedBarGames);
+    } else {
+      // Charge les données par défaut depuis gamesData et barGamesData
+      this.barGames = gamesData.filter(game =>
+        barGamesData.some(barGame => barGame.bar_id === barId && barGame.game_id === game.id_game)
+      );
+    }
   },
 
   editGame(index) {
     // Active le mode édition pour un jeu
     this.$set(this.barGames[index], "editMode", true);
   },
+
   saveGame(index) {
     // Sauvegarde les modifications
     const game = this.barGames[index];
@@ -289,34 +354,122 @@ export default {
     }
     // Désactive le mode édition
     this.$set(this.barGames[index], "editMode", false);
+
+    // Sauvegarde dans le localStorage
+    const barId = parseInt(this.$route.params.id, 10);
+    localStorage.setItem(`barGames_${barId}`, JSON.stringify(this.barGames));
+
     console.log("Game updated:", game);
   },
+
   deleteGame(index) {
     // Supprime un jeu
     const deletedGame = this.barGames.splice(index, 1);
+
+    // Sauvegarde dans le localStorage
+    const barId = parseInt(this.$route.params.id, 10);
+    localStorage.setItem(`barGames_${barId}`, JSON.stringify(this.barGames));
+
     console.log("Game deleted:", deletedGame);
   },
 
+  addGame() {
+    const barId = parseInt(this.$route.params.id, 10);
+
+    
+    const newGame = {
+      id_game: Date.now(), 
+      name_game: "",
+      price_game: "",
+      time_game: "",
+      nb_people_min_game: "",
+      nb_people_max_game: "",
+      state_game: "Available", // Par défaut
+      image: "default_image_url", 
+      editMode: true // Active le mode édition pour remplir les champs
+    };
+
+    // Ajouter le jeu à la liste actuelle
+    this.barGames.push(newGame);
+
+    // Sauvegarder dans le localStorage
+    localStorage.setItem(`barGames_${barId}`, JSON.stringify(this.barGames));
+
+    console.log("New game added:", newGame);
+  },
+
+
+
+
+  loadBarWorkers() {
+    const barId = parseInt(this.$route.params.id, 10);
+
+    // Vérifie si une version sauvegardée dans localStorage existe
+    const savedWorkers = localStorage.getItem(`workers_${barId}`);
+    if (savedWorkers) {
+      this.barWorkers = JSON.parse(savedWorkers);
+    } else {
+      this.barWorkers = workersData.filter(worker => worker.id_bar === barId);
+    }
+  },
+
+  deleteWorker(index) {
+    const workerToDelete = this.barWorkers[index];
+    this.barWorkers.splice(index, 1);
+
+    // Sauvegarde dans le localStorage après suppression
+    const barId = parseInt(this.$route.params.id, 10);
+    localStorage.setItem(`workers_${barId}`, JSON.stringify(this.barWorkers));
+
+    console.log("Worker deleted:", workerToDelete);
+  },
+
   editWorker(index) {
-    // Active le mode édition pour un worker
     this.$set(this.barWorkers[index], "editMode", true);
   },
+
   saveWorker(index) {
-    // Sauvegarde les modifications
     const worker = this.barWorkers[index];
     if (!worker.name_employee || !worker.post_employee || !worker.age_employee) {
       alert("Please fill in all fields!");
       return;
     }
-    // Désactive le mode édition
     this.$set(this.barWorkers[index], "editMode", false);
+
+    // Sauvegarde dans le localStorage après modification
+    const barId = parseInt(this.$route.params.id, 10);
+    localStorage.setItem(`workers_${barId}`, JSON.stringify(this.barWorkers));
+
     console.log("Worker updated:", worker);
   },
-  deleteWorker(index) {
-    // Supprime un worker
-    const deletedWorker = this.barWorkers.splice(index, 1);
-    console.log("Worker deleted:", deletedWorker);
-  }
+
+  addWorker() {
+      const barId = parseInt(this.$route.params.id, 10);
+
+      // Exemple d'un nouveau travailleur par défaut
+      const newWorker = {
+        id_employee: Date.now(), // Utilise un timestamp pour générer un ID unique
+        name_employee: "",
+        post_employee: "",
+        age_employee: "",
+        photo_employee: "", // Par défaut, pas d'image
+        editMode: true, // Active le mode édition pour remplir les champs
+      };
+
+      // Ajouter le travailleur à la liste actuelle
+      this.filteredWorkers.push(newWorker);
+
+      // Sauvegarder dans localStorage
+      localStorage.setItem(`workers_${barId}`, JSON.stringify(this.filteredWorkers));
+
+      console.log("New worker added:", newWorker);
+    },
+
+
+
+
+
+
 }
 };
 </script>
@@ -366,6 +519,17 @@ header {
 .home-section, .drinks, .games {
   text-align: center;
   margin-top: 20px;
+}
+
+.add-button{
+  background-color: #4CAF50;  
+  color: white;  
+  border: none;  
+  padding: 10px 20px;  
+  font-size: 16px;  
+  cursor: pointer;  
+  border-radius: 5px;  
+  transition: background-color 0.3s ease, transform 0.3s ease
 }
 
 .map-image {
